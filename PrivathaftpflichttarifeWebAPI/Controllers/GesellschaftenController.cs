@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileSystemGlobbing;
+﻿using Microsoft.AspNetCore.Mvc;
 using Privathaftpflichttarife.Infrastructure.Mock;
+using Privathaftpflichttarife.Infrastructure.Repositories;
 using Privathaftpflichttarife.Shared.Interfaces;
 
 namespace PrivathaftpflichttarifeWebAPI.Controllers
@@ -10,10 +9,10 @@ namespace PrivathaftpflichttarifeWebAPI.Controllers
     [Route("api/[controller]")]
     public class GesellschaftenController : Controller
     {
-        private readonly ITarifRepository _tarifRepository;
+        private readonly IGesellschaftRepository _repository;
         public GesellschaftenController()
         {
-            _tarifRepository = new InMemoryMock();
+            _repository = MockData.GetMockGesellschaften();
         }
 
         [HttpPost]
@@ -25,7 +24,7 @@ namespace PrivathaftpflichttarifeWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var gesellschaften = await _tarifRepository.GetAllGesellschaftenAsync();
+            var gesellschaften = await _repository.GetAllGesellschaftenAsync();
             return Ok(gesellschaften);
         }
     }

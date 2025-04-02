@@ -180,10 +180,5 @@ namespace Privathaftpflichttarife.Infrastructure.Repositories
                 _bausteintarife.Any(b => b.Id == id)
             );
         }
-
-        public Task<IEnumerable<IGesellschaft>> GetAllGesellschaftenAsync()
-        {
-            return Task.FromResult(_grundtarife.Select(g => g.Gesellschaft).Distinct());
-        }
     }
 }

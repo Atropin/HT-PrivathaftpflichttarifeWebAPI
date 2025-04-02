@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Privathaftpflichttarife.Infrastructure\Privathaftpflichttarife.Infrastructure.csproj" />
     <ProjectReference Include="..\Privathaftpflichttarife.Model\Privathaftpflichttarife.Core.csproj" />
+    <ProjectReference Include="..\Privathaftpflichttarife.Shared\Privathaftpflichttarife.Shared.csproj" />
   </ItemGroup>
 
 </Project>
