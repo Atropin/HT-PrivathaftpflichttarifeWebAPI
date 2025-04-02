@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Privathaftpflichttarife.Core.Models;
 using Privathaftpflichttarife.Infrastructure.Mock;
-using Privathaftpflichttarife.Infrastructure.Repositories;
+using Privathaftpflichttarife.Shared.DTOs;
 using Privathaftpflichttarife.Shared.Interfaces;
 
 namespace PrivathaftpflichttarifeWebAPI.Controllers
@@ -16,9 +17,17 @@ namespace PrivathaftpflichttarifeWebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] string name)
+        public async Task<IActionResult> Post([FromBody] GesellschaftRequest request)
         {
-            return Ok(new { message = $"Neue Gesellschaft mit Name {name}" });
+            if (request.Name == null || request.Name.Equals(string.Empty, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return BadRequest(new { message = "Name darf nicht leer sein" });
+            }
+
+            var gesellschaft = new Gesellschaft(request.Name);
+            var gesellschaftResult = await _repository.CreateGesellschaftAsync(gesellschaft);
+
+            return Ok(gesellschaftResult);
         }
 
         [HttpGet]

@@ -5,6 +5,7 @@ using Privathaftpflichttarife.Infrastructure.Mock;
 using Privathaftpflichttarife.Infrastructure.Repositories;
 using Privathaftpflichttarife.Shared.Interfaces;
 using Privathaftpflichttarife.Shared.DTOs;
+using System.Formats.Tar;
 
 namespace PrivathaftpflichttarifeWebAPI.Controllers
 {
@@ -59,6 +60,74 @@ namespace PrivathaftpflichttarifeWebAPI.Controllers
         {
             var tarife = await _tarifRepository.GetAllTarifeAsync();
             return Ok(tarife);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            ITarif tarif = await _tarifRepository.GetGrundtarifByIdAsync(id);
+            if (tarif == null)
+            {
+                tarif = await _tarifRepository.GetBausteintarifByIdAsync(id);
+            }
+
+            if (tarif == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(tarif);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateById(Guid id, [FromBody] TarifUpdateRequest request)
+        {
+            var isGrundTarif = await _tarifRepository.IsGrundTarifAsync(id);
+
+            if (isGrundTarif)
+            {
+                return await UpdateGrundtarifById(id, request);
+            }
+            else
+            {
+                return await UpdateBausteinById(id, request);
+            }
+        }
+
+        private async Task<IActionResult> UpdateBausteinById(Guid id, [FromBody] TarifUpdateRequest request)
+        {
+            var tarif = await _tarifRepository.GetBausteintarifByIdAsync(id);
+            
+            if (tarif == null)
+            {
+                return NotFound();
+            }
+
+            var newTarif = new BausteinTarif(request.Name, tarif.Gesellschaft);
+
+            var updatedTarif = await _tarifRepository.UpdateBausteintarifAsync(id, newTarif);
+            updatedTarif.Zusatzpraemie = request.Praemie;
+            updatedTarif.GueltigkeitsDatum = request.Gueltigkeit;
+
+            return Ok(updatedTarif);
+        }
+
+        private async Task<IActionResult> UpdateGrundtarifById(Guid id, [FromBody] TarifUpdateRequest request)
+        {
+            var tarif = await _tarifRepository.GetGrundtarifByIdAsync(id);
+
+            if (tarif == null)
+            {
+                return NotFound();
+            }
+
+            var newTarif = new GrundTarif(request.Name, tarif.Gesellschaft);
+
+            var updatedTarif = await _tarifRepository.UpdateGrundtarifAsync(id, newTarif);
+            updatedTarif.Praemie = request.Praemie;
+            updatedTarif.GueltigkeitsDatum = request.Gueltigkeit;
+
+            return Ok(updatedTarif);
         }
     }
 }

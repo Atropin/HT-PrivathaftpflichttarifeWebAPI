@@ -26,6 +26,7 @@ namespace Privathaftpflichttarife.Shared.Interfaces
         // Allgemeine Tarif-Operationen
         Task<IEnumerable<object>> GetAllTarifeAsync(); // Gibt sowohl Grund- als auch Bausteintarife zurück
         Task<bool> TarifExistsAsync(Guid id);
+        Task<bool> IsGrundTarifAsync(Guid id);
 
     }
 }
